@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="adBlocker.vcxproj" Id="19e78743-ee2b-4de5-8926-27c82ee3e78b" />
+</Solution>

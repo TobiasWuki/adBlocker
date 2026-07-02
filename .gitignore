@@ -1,0 +1,8 @@
+# Visual Studio temporäre Dateien und Ordner
+.vs/
+x64/
+Debug/
+Release/
+*.vcxproj.user
+*.db
+*.opendb
