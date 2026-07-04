@@ -4,6 +4,7 @@
 #include <fstream> //fileStream
 #include <unordered_set> // Für die Hash-Tabelle
 #include <cstdint>
+#include <cctype>
 #ifdef _WIN32
     #include <winsock2.h>
     #include <ws2tcpip.h>
@@ -26,13 +27,30 @@ adSieve::adSieve() {
     std::string currentLine;
 
     while (std::getline(file, currentLine)) {
-        size_t space = currentLine.find(' '); //size_t = riesiges 64 bit unsigned int
 
+		if (currentLine.empty()) {			continue;  } //wenn leer überspringen
+		
+		size_t otherChars = currentLine.find_first_of("!#");
+		
+		if (otherChars != std::string::npos) {
+		continue;			// wenn kommentar überspringen
+        }
+	
+		
+        size_t space = currentLine.find(' '); //size_t = riesiges 64 bit unsigned int
         // Semantik-Schutz: Nur splitten, wenn wirklich ein Leerzeichen da ist!
         if (space != std::string::npos) {
-            std::string domain = currentLine.substr(space + 1);
+            std::string domain = currentLine.substr(space + 1);		//ip adresse ist immer mit space getrennt, daher wenn space ip adresse davor daher abschneiden
+
+			for (int i = 0; i < domain.length(); i++) {
+				if (std::isalnum(domain[i]) { //es können kommentare oder auch syntax dass es eine wildcard ist, davorstehen. daher jedes zeichen weg
+					
+					domain = currentLine.substr(i-1);
+				}
+			}	
             hashTable.insert(domain);
         }
+			
         else {
             // Keine IP davor? Dann ist die ganze Zeile die Domain!
             hashTable.insert(currentLine);
