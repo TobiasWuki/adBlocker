@@ -1,10 +1,15 @@
 #pragma once
 #include <string>
 #include <cstdint>
-//#include <sys/socket.h> // Für socket(), bind(), recvfrom(), sendto()             WICHTIG FÜR LINUX
-//#include <netinet/in.h> // Für sockaddr_in                                        WICHTIG FÜR LINUX
-#include <winsock2.h>   // Für socket, bind, recvfrom, sendto, sockaddr_in
-#include <ws2tcpip.h>  // Für erweiterte IP-Funktionen
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+#endif
+
 
 namespace utils {
 
@@ -26,7 +31,7 @@ namespace utils {
 
         inline int receiveQuery(char* queryBuffer, sockaddr_in ipClient, int outPort53Socket, int maxSize) {
 
-            int sizeOf = sizeof(ipClient);
+            socklen_t sizeOf = sizeof(ipClient);
             int bytesReceivedQuery = recvfrom(outPort53Socket, queryBuffer, maxSize, 0, (sockaddr*)&ipClient, &sizeOf);
 
             return bytesReceivedQuery;
@@ -67,7 +72,7 @@ namespace utils {
 
 
             sockaddr_in fromDNS;
-            int fromLength = sizeof(fromDNS); // Das Betriebssystem MUSS die Größe des Speichers kennen!
+            socklen_t fromLength = sizeof(fromDNS); // Das Betriebssystem MUSS die Größe des Speichers kennen!
 
             // Hier passiert die Magie mit Zeigern (&) und Typecasts (sockaddr*)
             int bytesReceivedAnswer = recvfrom(outInternetSocket, queryBuffer, maxSize, 0, (sockaddr*)&fromDNS, &fromLength);

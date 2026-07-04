@@ -4,10 +4,15 @@
 #include <fstream> //fileStream
 #include <unordered_set> // Für die Hash-Tabelle
 #include <cstdint>
-//#include <sys/socket.h> // Für socket(), bind(), recvfrom(), sendto()             WICHTIG FÜR LINUX
-//#include <netinet/in.h> // Für sockaddr_in                                        WICHTIG FÜR LINUX
-#include <winsock2.h>   // Für socket, bind, recvfrom, sendto, sockaddr_in
-#include <ws2tcpip.h>  // Für erweiterte IP-Funktionen
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
+    #include <sys/socket.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+#endif
+
 
 adSieve::adSieve() {
     
@@ -108,5 +113,5 @@ bool adSieve::checkBuffer(char* queryBuffer) {
             domain += '.';
         }
     }
-    return hashTable.contains(domain);
+	return hashTable.find(domain) != hashTable.end();
 }
