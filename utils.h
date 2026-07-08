@@ -34,7 +34,6 @@ namespace utils {
 
             socklen_t sizeOf = sizeof(ipClient);
             int bytesReceivedQuery = recvfrom(outPort53Socket, queryBuffer, maxSize, 0, (sockaddr*)&ipClient, &sizeOf);
-		    std::cout << "erhalten" << bytesReceivedQuery << std::endl;
             return bytesReceivedQuery;
 
         }
