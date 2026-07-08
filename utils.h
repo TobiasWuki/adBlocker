@@ -30,22 +30,22 @@ namespace utils {
         inline std::string upstreamDNS = "1.1.1.1";
         inline constexpr int maxSize = 512;
 
-        inline int receiveQuery(char* queryBuffer, sockaddr_in ipClient, int outPort53Socket, int maxSize) {
+        inline int receiveQuery(char* queryBuffer, sockaddr_in& ipClient, int outPort53Socket, int maxSize) {
 
             socklen_t sizeOf = sizeof(ipClient);
             int bytesReceivedQuery = recvfrom(outPort53Socket, queryBuffer, maxSize, 0, (sockaddr*)&ipClient, &sizeOf);
-		std::cout << "erhalten" << bytesReceivedQuery << std::endl;
+		    std::cout << "erhalten" << bytesReceivedQuery << std::endl;
             return bytesReceivedQuery;
 
         }
 
-        inline bool send(char* gaslightMsg, sockaddr_in ipClient, int outPort53Socket, int byteCount) {
+        inline bool send(char* gaslightMsg, sockaddr_in& ipClient, int outPort53Socket, int byteCount) {
 
             int bytesSent = sendto(outPort53Socket, gaslightMsg, byteCount, 0, (sockaddr*)&ipClient, sizeof(ipClient));
 
             bool worked = false;
 
-            if (byteCount == bytesSent) { worked = true; }
+            //if (byteCount == bytesSent) { worked = true; }
 
             return worked;
 
