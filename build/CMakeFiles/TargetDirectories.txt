@@ -1,0 +1,3 @@
+/home/tobiaswukovits/projects/adBlocker/build/CMakeFiles/adBlocker.dir
+/home/tobiaswukovits/projects/adBlocker/build/CMakeFiles/edit_cache.dir
+/home/tobiaswukovits/projects/adBlocker/build/CMakeFiles/rebuild_cache.dir

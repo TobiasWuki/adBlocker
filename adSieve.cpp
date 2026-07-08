@@ -112,23 +112,24 @@ void adSieve::startFilterEngine() {
             continue;
         }
         */
-
+		std::cout << "vor checkBuffer" << std::endl;
         if (checkBuffer(queryBuffer)) { //sowieso ein boolean, braucht kein vergleich 
-
+		std::cout << "checkBuffer funktioniert" << std::endl;
             utils::postOffice::gaslightAppointeeStan(queryBuffer);
             utils::postOffice::send(queryBuffer, ipClient, outPort53Socket, byteCount);
-
+		std::cout << "gaslight erfolgreich" << std::endl;
             continue;
 
         }
         else {
             utils::postOffice::forward(queryBuffer, utils::postOffice::upstreamDNS, byteCount, outInternetSocket);
+		std::cout << "forwarded" << std::endl;
         }
 
         byteCount = utils::postOffice::receiveAnswer(queryBuffer, outInternetSocket, utils::postOffice::maxSize);
-
+		std::cout << "antwort bekommen" << std::endl;
         utils::postOffice::send(queryBuffer, ipClient, outPort53Socket, byteCount);
-
+		std::cout << "gesendet" << std::endl;
     }
 }
 

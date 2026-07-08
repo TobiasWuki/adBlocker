@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/adBlocker.dir/link.d CMakeFiles/adBlocker.dir/adBlocker.cpp.o CMakeFiles/adBlocker.dir/adSieve.cpp.o CMakeFiles/adBlocker.dir/utils.cpp.o -o adBlocker
