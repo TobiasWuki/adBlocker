@@ -30,17 +30,17 @@ namespace utils {
         inline std::string upstreamDNS = "1.1.1.1";
         inline constexpr int maxSize = 512;
 
-        inline int receiveQuery(char* queryBuffer, sockaddr_in& ipClient, int outPort53Socket, int maxSize) {
+        inline int receiveQuery(char* queryBuffer, sockaddr_in& ipClient, int port53Socket, int maxSize) {
 
             socklen_t sizeOf = sizeof(ipClient);
-            int bytesReceivedQuery = recvfrom(outPort53Socket, queryBuffer, maxSize, 0, (sockaddr*)&ipClient, &sizeOf);
+            int bytesReceivedQuery = recvfrom(port53Socket, queryBuffer, maxSize, 0, (sockaddr*)&ipClient, &sizeOf);
             return bytesReceivedQuery;
 
         }
 
-        inline bool send(char* gaslightMsg, sockaddr_in& ipClient, int outPort53Socket, int byteCount) {
+        inline bool send(char* gaslightMsg, sockaddr_in& ipClient, int port53Socket, int byteCount) {
 
-            int bytesSent = sendto(outPort53Socket, gaslightMsg, byteCount, 0, (sockaddr*)&ipClient, sizeof(ipClient));
+            int bytesSent = sendto(port53Socket, gaslightMsg, byteCount, 0, (sockaddr*)&ipClient, sizeof(ipClient));
 
             bool worked = false;
 
@@ -50,7 +50,7 @@ namespace utils {
 
         }
 
-        inline bool forward(char* queryBuffer, std::string UPSTREAM_DNS, int byteCount, int& outInternetSocket) {
+        inline bool forward(char* queryBuffer, std::string UPSTREAM_DNS, int byteCount, int& internetSocket) {
 
             // 2. Erstelle das Adress-Schild für Port 53
             sockaddr_in toCloudFare;
@@ -60,7 +60,7 @@ namespace utils {
 
             bool workedForward = false;
 
-            int bytesSent = sendto(outInternetSocket, queryBuffer, byteCount, 0, (sockaddr*)&toCloudFare, sizeof(toCloudFare));
+            int bytesSent = sendto(internetSocket, queryBuffer, byteCount, 0, (sockaddr*)&toCloudFare, sizeof(toCloudFare));
 
             if (byteCount == bytesSent) { workedForward = true; }
 
@@ -68,20 +68,20 @@ namespace utils {
 
         }
 
-        inline int receiveAnswer(char* queryBuffer, int& outInternetSocket, int maxSize) {
+        inline int receiveAnswer(char* queryBuffer, int& internetSocket, int maxSize) {
 
 
             sockaddr_in fromDNS;
             socklen_t fromLength = sizeof(fromDNS); // Das Betriebssystem MUSS die Größe des Speichers kennen!
 
             // Hier passiert die Magie mit Zeigern (&) und Typecasts (sockaddr*)
-            int bytesReceivedAnswer = recvfrom(outInternetSocket, queryBuffer, maxSize, 0, (sockaddr*)&fromDNS, &fromLength);
+            int bytesReceivedAnswer = recvfrom(internetSocket, queryBuffer, maxSize, 0, (sockaddr*)&fromDNS, &fromLength);
 
             return bytesReceivedAnswer;
             /*
             sockaddr_in fromDNS;
 
-           int bytesReceivedAnswer = recvfrom(outInternetSocket, queryBuffer, maxSize, fromDNS);
+           int bytesReceivedAnswer = recvfrom(internetSocket, queryBuffer, maxSize, fromDNS);
 
             return bytesReceivedAnswer;
             */
@@ -106,10 +106,10 @@ namespace utils {
 
         }
 
-        inline void initSockets(int& outPort53Socket, int& outInternetSocket) {
+        inline void initSockets(int& port53Socket, int& internetSocket) {
 
             // 1. Erschaffe die Eingangstür (Eingangs-Socket)
-            outPort53Socket = socket(AF_INET, SOCK_DGRAM, 0);
+            port53Socket = socket(AF_INET, SOCK_DGRAM, 0);
 
             // 2. Erstelle das Adress-Schild für Port 53
             sockaddr_in localAddress;
@@ -117,12 +117,12 @@ namespace utils {
             localAddress.sin_port = htons(53);                           // Auf allen Kanälen lauschen
             inet_pton(AF_INET, "0.0.0.0", &localAddress.sin_addr);
             // 3. Nagle das Schild an die Eingangstür (Binden)
-            bind(outPort53Socket, (sockaddr*)&localAddress, sizeof(localAddress));
+            bind(port53Socket, (sockaddr*)&localAddress, sizeof(localAddress));
 
 
             // 4. Erschaffe die Ausgangstür für das Internet (Ausgangs-Socket)
             //    (Kein bind nötig, das OS verwaltet den Port beim Rausgehen selbst)
-            outInternetSocket = socket(AF_INET, SOCK_DGRAM, 0);
+            internetSocket = socket(AF_INET, SOCK_DGRAM, 0);
         }
     
 	}
